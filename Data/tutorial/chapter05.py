@@ -4,3 +4,7 @@
 # @Author : SuperYong 
 # @File : chapter05.py
 # @summary :
+
+from fastapi import APIRouter
+
+app05 = APIRouter()
