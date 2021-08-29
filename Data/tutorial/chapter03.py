@@ -6,9 +6,18 @@
 # @summary :
 
 from enum import Enum
+from datetime import date
 from typing import Optional, List
-from fastapi import APIRouter
+from fastapi import APIRouter, Cookie, Header
+
+'''
+使用pydantic定义请求体数据的时候
+对字段进行校验使用Field类
+对路径参数进行校验使用Path类
+对查询参数进行校验使用Query类
+'''
 from fastapi import Path, Query
+from pydantic import BaseModel, Field
 
 app03 = APIRouter()
 
@@ -78,3 +87,79 @@ def query_params_validate(value: str = Query(...,
                                              regex='^a'),
                           values: List[str] = Query(default=['v1', 'v2'], alias='alias_name')):
     return value, values
+
+
+'''请求体和混合参数的使用'''
+'''请求参数和字段'''
+
+
+class CityInfo(BaseModel):
+    name: str = Field(..., example='BeiJing')
+    country: str
+    country_code: str = None
+    country_population: int = Field(default=800, title='人口数量', description='国家的人口数量')
+
+    class Config:
+        # 示例 在localhost:8000/docs上的端口文档可以看到示例
+        schema_extra = {
+            'example': {
+                'name': 'ShangHai',
+                'country': 'Chain',
+                'country_code': 'CN',
+                'country_population': 1400000000
+            }
+        }
+
+
+@app03.post('/request_body/city')
+def city_info(city: CityInfo):
+    print(city.name, city.country)
+    return city.dict()
+
+
+'''请求体 路径参数 查询参数 多参数混合'''
+
+
+@app03.put('/request_body/city/{name}')
+def mix_city_info(
+        name: str,
+        city01: CityInfo,
+        city02: CityInfo,  # body可以定义多个
+        confirmed: int = Query(ge=0, description='确诊数', default=0),
+        death: int = Query(ge=0, description='死亡数', default=0)
+):
+    if name == 'Shanghai':
+        return {'Shanghai': {'confirmed': confirmed, 'death': death}}
+    return city01.dict(), city02.dict()
+
+
+'''数据格式嵌套的请求体'''
+
+
+class Data(BaseModel):
+    city: List[CityInfo] = None
+    date: date
+    confirmed: int = Query(ge=0, description='确诊数', default=0)
+    death: int = Query(ge=0, description='死亡数', default=0)
+    recovered: int = Field(ge=0, description='痊愈数', default=0)
+
+
+@app03.put('/request_body/nested')
+def nested_models(data: Data):
+    return data.json()
+
+
+'''Cookie 和 Header参数'''
+
+
+@app03.get('/cookie')
+def cookie(cookie_id: Optional[str] = Cookie(None)):
+    return {'cookie_id'}
+
+
+@app03.get('/header')
+def header(user_agent: Optional[str] = Header(None, convert_underscores=True), x_token: List[str] = Header(None)):
+    # convert_underscores 自动转换下划线
+    # user_agent -> user-agent
+    return {'User-Agent': user_agent, 'x_token': x_token}
+
