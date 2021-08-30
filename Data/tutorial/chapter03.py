@@ -154,7 +154,7 @@ def nested_models(data: Data):
 
 @app03.get('/cookie')
 def cookie(cookie_id: Optional[str] = Cookie(None)):
-    return {'cookie_id'}
+    return {'cookie_id': cookie_id}
 
 
 @app03.get('/header')

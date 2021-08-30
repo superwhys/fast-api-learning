@@ -5,7 +5,7 @@
 from sqlalchemy import Column, String, Integer, BigInteger, Date, DateTime, ForeignKey, func
 from sqlalchemy.orm import relationship
 
-from .database import Base
+from gitproject.coronavirus.database import Base
 
 
 class City(Base):
@@ -21,7 +21,7 @@ class City(Base):
     created_at = Column(DateTime, server_default=func.now(), comment='创建时间')
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), comment='更新时间')
 
-    __mapper_args__ = {"order_by": country_code}  # 默认是正序，倒序加上.desc()方法
+    # __mapper_args__ = {"order_by": country_code}  # 默认是正序，倒序加上.desc()方法
 
     def __repr__(self):
         return f'{self.country}_{self.province}'
@@ -41,7 +41,7 @@ class Data(Base):
     created_at = Column(DateTime, server_default=func.now(), comment='创建时间')
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), comment='更新时间')
 
-    __mapper_args__ = {"order_by": date.desc()}  # 按日期降序排列
+    # __mapper_args__ = {"order_by": date.desc()}  # 按日期降序排列
 
     def __repr__(self):
         return f'{repr(self.date)}：确诊{self.confirmed}例'

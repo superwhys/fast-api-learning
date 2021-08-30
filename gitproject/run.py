@@ -8,7 +8,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from coronavirus import application
+from gitproject.coronavirus import application
 from tutorial import app03, app04, app05, app06, app07, app08
 
 # from fastapi.exceptions import RequestValidationError

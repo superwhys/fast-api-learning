@@ -10,9 +10,9 @@ from fastapi.templating import Jinja2Templates
 from pydantic import HttpUrl
 from sqlalchemy.orm import Session
 
-from coronavirus import crud, schemas
-from coronavirus.database import engine, Base, SessionLocal
-from coronavirus.models import City, Data
+from gitproject.coronavirus import crud, schemas
+from gitproject.coronavirus.database import engine, Base, SessionLocal
+from gitproject.coronavirus.models import City, Data
 
 application = APIRouter()
 
